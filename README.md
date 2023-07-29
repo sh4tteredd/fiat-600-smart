@@ -18,3 +18,4 @@
 #### Buying lately:
  - Rolling code compatible remote (https://a.aliexpress.com/_EGZrL0X)
  - If it's possible to use it in some ways, an NFC reader
+ - https://www.ricambi-smc.it/ricambi-auto/prodotti/batteria-auto-fiamm-7905140-12v-44ah-390a/420237?gclid=CjwKCAjw8ZKmBhArEiwAspcJ7lWkkx5FRfzFPQXfDzFnIXq4pmC18679WCiFq-hGUBT20aIF_oPuIxoCKEkQAvD_BwE
