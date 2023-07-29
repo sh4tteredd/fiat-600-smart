@@ -17,3 +17,4 @@
 
 #### Buying lately:
  - Rolling code compatible remote (https://a.aliexpress.com/_EGZrL0X)
+ - If it's possible to use it in some ways, an NFC reader
