@@ -13,3 +13,4 @@
 #### Buying soon:
  - GSM Module (https://a.aliexpress.com/_EwLYeAP)
  - GPS Module (https://a.aliexpress.com/_ExqmfET)
+ - Batteries for the GPS and GSM modules
