@@ -160,7 +160,7 @@ char *strToHex(char *str, byte *hexArray, byte *len)
   *len = ptr - hexArray;
   return idx;
 }
-
+//////////////////////////////////////////////////////////////////////////////// GPS+GSM Module
 void checkLocate()
 {
 
@@ -204,6 +204,8 @@ void checkLocate()
     delay(100);
   }
 }
+//////////////////////////////////////////////////////////////////////////////// more stuff
+
 void moreStuff(char *cons)
 {
 
@@ -227,7 +229,7 @@ void moreStuff(char *cons)
   }
   //checkLocate(); to enable when I buy the gps and gsm module
 }
-
+////////////////////////////////////////////////////////////////////////////////
 void rxParse(char *buf, int len)
 {
   packet_t rxPacket;
