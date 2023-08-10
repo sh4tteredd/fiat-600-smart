@@ -25,3 +25,17 @@
 ----
 
 ## Programming
+
+First of all, adapt the [MCP2515 library](https://github.com/autowp/arduino-mcp2515) to the Mega. I've used the one provided by [adamtheone](https://github.com/adamtheone/canDrive), so in the MCP2515.h file we have to change `MCP2515_DEFAULT_CS_PIN` from 10 to 53
+
+so the new connections are:
+
+| MEGA | CAN module |
+| ---- | ---------- |
+| 2    | INT        |
+| 52   | SCK        |
+| 51   | SI         |
+| 50   | SO         |
+| 53   | CS         |
+
+N.B. if you want to use an Arduino Uno instead of the Mega, you don't need to modify the library and you have to use [the classic wiring](https://europe1.discourse-cdn.com/arduino/original/4X/c/a/3/ca3f21ea49f6ca4242c1168779d26aa42d888ba0.png)
