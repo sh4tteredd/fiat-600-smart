@@ -1,4 +1,6 @@
 #include <CAN.h>
+#include <SoftwareSerial.h>
+#include <TinyGPS.h>
 //------------------------------------------------------------------------------
 // Settings
 #define RANDOM_CAN 0
@@ -16,9 +18,16 @@ const char SEPARATOR = ',';
 const char TERMINATOR = '\n';
 const char RXBUF_LEN = 100;
 
+float gpslat, gpslon;
+
+TinyGPS gps;
+SoftwareSerial sgps(4, 5); //changepins
+SoftwareSerial sgsm(2, 3);
+
 bool isPortieraAperta = false;
 const int relay1 = 26;
 const int relay2 = 27;
+char cons[RXBUF_LEN];
 //------------------------------------------------------------------------------
 // Printing a packet to serial
 void printHex(long num)
@@ -152,7 +161,72 @@ char *strToHex(char *str, byte *hexArray, byte *len)
   return idx;
 }
 
+void checkLocate()
+{
 
+  sgsm.listen();
+  if (sgsm.available() > 0)
+  {
+    String c = sgsm.readString();
+    c.trim();
+    if (c.indexOf("GET-GPS") >= 0)
+    {
+      sgps.listen();
+      while (sgps.available())
+      {
+        int coord = sgps.read();
+        if (gps.encode(coord))
+        {
+          gps.f_get_position(&gpslat, &gpslon);
+        }
+      }
+      sgsm.print("\r");
+      delay(1000);
+      sgsm.print("AT+CMGF=1\r");
+      delay(1000);
+      /*Replace XXXXXXXXXX to 10 digit mobile number &
+        ZZ to 2 digit country code*/
+      sgsm.print("AT+CMGS=\"+ZZXXXXXXXXXX\"\r");
+      delay(1000);
+      // The text of the message to be sent.
+      sgsm.print("Latitude :");
+      sgsm.println(gpslat, 6);
+      sgsm.print("Longitude:");
+      sgsm.println(gpslon, 6);
+      sgsm.print("http://maps.google.com/maps?q=");
+      sgsm.print(gpslat, 6);
+      sgsm.print(",");
+      sgsm.println(gpslon, 6);
+      delay(1000);
+      sgsm.write(0x1A);
+      delay(1000);
+    }
+    delay(100);
+  }
+}
+void moreStuff(char *cons)
+{
+
+  if (strcmp(cons, "light_on") == 0)
+  {
+    Serial.println("on");
+    // apre portiera
+    // analogRead(A0) qualcosa che mi dice se la portiera è aperta o chiusa
+    // if(analogRead(A0) > 100))
+    digitalWrite(relay1, LOW);
+    delay(100);
+    digitalWrite(relay1, HIGH);
+    isPortieraAperta = true;
+  }
+  else if (strcmp(cons, "light_off") == 0)
+  {
+    Serial.println("off");
+    // chiude portiera
+    digitalWrite(relay1, HIGH);
+    isPortieraAperta = false;
+  }
+  //checkLocate(); to enable when I buy the gps and gsm module
+}
 
 void rxParse(char *buf, int len)
 {
@@ -178,38 +252,23 @@ void rxParse(char *buf, int len)
   // DATA
   ptr = strToHex(ptr + 1, rxPacket.dataArray, &rxPacket.dlc);
   // Rimuovi gli spazi bianchi all'inizio della stringa
-int start = 0;
-while (isspace(buf[start])) {
+  cons = buf;
+
+  int start = 0;
+  while (isspace(cons[start]))
+  {
     start++;
-}
+  }
 
-// Rimuovi gli spazi bianchi alla fine della stringa
-int end = strlen(buf) - 1;
-while (end > start && isspace(buf[end])) {
+  // Rimuovi gli spazi bianchi alla fine della stringa
+  int end = strlen(cons) - 1;
+  while (end > start && isspace(cons[end]))
+  {
     end--;
-}
-buf[end + 1] = '\0'; // Termina la stringa dopo l'ultimo carattere significativo
-
-  Serial.println(buf);
-
-  if (strcmp(buf, "light_on") == 0)
-  {
-    Serial.println("on");
-    // apre portiera
-    //analogRead(A0) qualcosa che mi dice se la portiera è aperta o chiusa
-    //if(analogRead(A0) > 100))
-    digitalWrite(relay1, LOW);
-    delay(100);
-    digitalWrite(relay1, HIGH);
-    isPortieraAperta = true;
   }
-  else if (strcmp(buf, "light_off") == 0)
-  {
-    Serial.println("off");
-    // chiude portiera
-    digitalWrite(relay1, HIGH);
-    isPortieraAperta = false;
-  }
+  cons[end + 1] = '\0'; // Termina la stringa dopo l'ultimo carattere significativo
+
+  moreStuff(cons);
 
 #if RANDOM_CAN == 1
   // echo back
@@ -247,6 +306,8 @@ void setup()
   Serial.begin(250000);
   pinMode(relay1, OUTPUT);
   pinMode(relay2, OUTPUT);
+  sgsm.begin(9600);
+  sgps.begin(9600);
   /*
   if(analogRead(A0) > 100)
     isPortieraAperta = true;
