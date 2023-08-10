@@ -28,6 +28,9 @@
 
 First of all, adapt the [MCP2515 library](https://github.com/autowp/arduino-mcp2515) to the Mega. I've used the one provided by [adamtheone](https://github.com/adamtheone/canDrive), so in the MCP2515.h file we have to change `MCP2515_DEFAULT_CS_PIN` from 10 to 53
 
+
+<img width="1173" alt="Screenshot 2023-08-10 at 11 47 44" src="https://github.com/sh4tteredd/fiat-600-smart/assets/55893559/e1595817-e60f-4ea5-93a7-51470de354b7">
+
 so the new connections are:
 
 | MEGA | CAN module |
