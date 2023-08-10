@@ -1,7 +1,7 @@
 #include <CAN.h>
 //------------------------------------------------------------------------------
 // Settings
-#define RANDOM_CAN 1
+#define RANDOM_CAN 0
 #define CAN_SPEED (500E3) // LOW=33E3, MID=95E3, HIGH=500E3 (for Vectra)
 typedef struct
 {
@@ -17,6 +17,8 @@ const char TERMINATOR = '\n';
 const char RXBUF_LEN = 100;
 
 bool isPortieraAperta = false;
+const int relay1 = 26;
+const int relay2 = 27;
 //------------------------------------------------------------------------------
 // Printing a packet to serial
 void printHex(long num)
@@ -175,18 +177,37 @@ void rxParse(char *buf, int len)
 
   // DATA
   ptr = strToHex(ptr + 1, rxPacket.dataArray, &rxPacket.dlc);
+  // Rimuovi gli spazi bianchi all'inizio della stringa
+int start = 0;
+while (isspace(buf[start])) {
+    start++;
+}
 
-  if (strncmp(buf, "light_on", 10) == 0)
+// Rimuovi gli spazi bianchi alla fine della stringa
+int end = strlen(buf) - 1;
+while (end > start && isspace(buf[end])) {
+    end--;
+}
+buf[end + 1] = '\0'; // Termina la stringa dopo l'ultimo carattere significativo
+
+  Serial.println(buf);
+
+  if (strcmp(buf, "light_on") == 0)
   {
-
+    Serial.println("on");
     // apre portiera
     //analogRead(A0) qualcosa che mi dice se la portiera è aperta o chiusa
     //if(analogRead(A0) > 100))
+    digitalWrite(relay1, LOW);
+    delay(100);
+    digitalWrite(relay1, HIGH);
     isPortieraAperta = true;
   }
-  else if (strncmp(buf, "light_off", 12) == 0)
+  else if (strcmp(buf, "light_off") == 0)
   {
+    Serial.println("off");
     // chiude portiera
+    digitalWrite(relay1, HIGH);
     isPortieraAperta = false;
   }
 
@@ -224,6 +245,8 @@ void RXcallback(void)
 void setup()
 {
   Serial.begin(250000);
+  pinMode(relay1, OUTPUT);
+  pinMode(relay2, OUTPUT);
   /*
   if(analogRead(A0) > 100)
     isPortieraAperta = true;

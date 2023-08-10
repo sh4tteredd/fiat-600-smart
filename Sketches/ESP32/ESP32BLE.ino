@@ -4,7 +4,7 @@
 #include <BLEAdvertisedDevice.h>
 #include <HardwareSerial.h>
 
-HardwareSerial Serial2(2); // Use hardware UART on ESP32 (Serial2)
+//HardwareSerial Serial2(2); // Use hardware UART on ESP32 (Serial2)
 const int relay = 26;
 const int RSSI_THRESHOLD = -70; // Adjust this threshold as needed
 bool stop;
@@ -43,8 +43,26 @@ void setup() {
 }
 
 void loop() {
+  // Check if there's any data available in the serial buffer
+  while (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n'); // Read the incoming command
+
+    if (command == "toggle") {
+      // Toggle the deviceFound flag
+      deviceFound = !deviceFound;
+      Serial.println("Toggled deviceFound flag.");
+    }
+  }
+
   // Start scanning for Bluetooth devices
   pBLEScan->start(5, false); // Scan for 5 seconds
+
+      Serial2.println("light_on"); // Sending "light_on" command to Arduino
+    delay(5000);
+
+    //digitalWrite(relay, HIGH); //mette in corto COM e NC
+    Serial2.println("light_off"); // Sending "light_off" command to Arduino
+    delay(5000);
 
   // If the target device is found within range, let the current flow
   if (deviceFound) {
@@ -60,3 +78,4 @@ void loop() {
   // Reset deviceFound flag
   deviceFound = false;
 }
+
