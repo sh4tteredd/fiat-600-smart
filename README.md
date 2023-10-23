@@ -28,7 +28,6 @@
 
 First of all, adapt the [MCP2515 library](https://github.com/autowp/arduino-mcp2515) to the Mega. I've used the one provided by [adamtheone](https://github.com/adamtheone/canDrive), so in the MCP2515.h file we have to change `MCP2515_DEFAULT_CS_PIN` from 10 to 53
 
-
 <img width="1173" alt="Screenshot 2023-08-10 at 11 47 44" src="https://github.com/sh4tteredd/fiat-600-smart/assets/55893559/e1595817-e60f-4ea5-93a7-51470de354b7">
 
 so the new connections are:
@@ -42,3 +41,21 @@ so the new connections are:
 | 53   | CS         |
 
 N.B. if you want to use an Arduino Uno instead of the Mega, you don't need to modify the library and you have to use [the classic wiring](https://europe1.discourse-cdn.com/arduino/original/4X/c/a/3/ca3f21ea49f6ca4242c1168779d26aa42d888ba0.png)
+
+--------
+
+### Acquisto novembre
+
+- GPS
+
+- GSM
+
+- radio
+
+- schermo CARPLAY
+
+- schermino contagiri
+
+- cavetto schermino contagiri
+
+- caricatore USB
